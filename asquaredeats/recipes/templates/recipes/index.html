@@ -1,5 +1,6 @@
 <h1>A<sup>2</sup> Eats</h1>
 
+<h2>Recipes</h2>
 {% if recipe_list %}
     <ul>
     {% for recipe in recipe_list %}
@@ -7,5 +8,16 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>No polls are available.</p>
+    <p>No Recipes are available.</p>
+{% endif %}
+
+<h2>Menus</h2>
+{% if menu_list %}
+    <ul>
+    {% for menu in menu_list %}
+        <li><a href="{{ menu.get_absolute_url }}">{{ menu.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Menus are available.</p>
 {% endif %}

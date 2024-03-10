@@ -6,7 +6,8 @@ from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
                       UniqueIdProperty, RelationshipTo)
 from dotenv import load_dotenv
 from neomodel import db
-from models import Recipe, Ingredient, IngredientToRecipeRelation
+from models import Menu, Recipe, Ingredient, IngredientToRecipeRelation
+from datetime import datetime
 
 
 # def add_friend(driver, name, friend_name):
@@ -52,11 +53,14 @@ if __name__ == '__main__':
     # Change the db conenction
     driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     db.set_connection(driver=driver)
+    [m.delete() for m in Menu.nodes.all()]
+    [i.delete() for i in Ingredient.nodes.all()]
+    [r.delete() for r in Recipe.nodes.all()]
     # config.DRIVER = driver
     # results, meta = db.cypher_query("RETURN 'Hello World' as message")
     # print(results)
     
-    ingredients = [
+    salad_ingredients = [
         { 
             'name' : 'Kalamata olives',
             'relations' : {
@@ -82,8 +86,37 @@ if __name__ == '__main__':
             } 
         }
     ]
+
+    dal_ingredients = [
+        { 
+            'name' : 'Yellow onion',
+            'relations' : {
+                'unit' : 'whole', 
+                'quantity' : '5', 
+                'description' : 'sliced'
+            } 
+        },
+        { 
+            'name' : 'Ginger',
+            'relations' : {
+                'unit' : 'thumb sized piece', 
+                'quantity' : '1', 
+                'description' : 'grated'
+            } 
+        },
+        { 
+            'name' : 'Cumin Seeds',
+            'relations' : {
+                'unit' : 'table spoon', 
+                'quantity' : '1', 
+                'description' : ' toasted'
+            } 
+        }
+    ]
+
     salad = Recipe(name='Tomato Pasta Salad').save()
-    for i in ingredients:
+    dal = Recipe(name='Dal').save()
+    for i in salad_ingredients:
         print(i)
         name = i.get('name')
         relations = i.get('relations')
@@ -94,8 +127,29 @@ if __name__ == '__main__':
                                     'unit' : relations.get('unit'),
                                     'description' : relations.get('description')
                                     })
-    db.close_connection()
+    for i in dal_ingredients:
+        print(i)
+        name = i.get('name')
+        relations = i.get('relations')
+        ingredient = Ingredient(name=name).save()
+        dal.ingredients.connect(ingredient,
+                                {
+                                    'quantity' :relations.get('quantity'),
+                                    'unit' : relations.get('unit'),
+                                    'description' : relations.get('description')
+                                    })
+    dal.ingredients.connect(Ingredient.nodes.get(name='Tomato'), {
+        'quantity' : 1,
+        'unit' : 'whole',
+        'description' : 'diced'
+    })
 
+    menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
+    menu.recipes.connect(dal)
+    menu.recipes.connect(salad)
+
+    db.close_connection()
+    
     # jim = Person(name='Jim', age=3).save()  # Create
     # jim.age = 4
     # jim.save()  # Update, (with validation)

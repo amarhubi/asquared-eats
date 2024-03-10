@@ -1,17 +1,13 @@
-import os
 from typing import Any
 from neomodel import config, db
-from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404
-from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.shortcuts import render
+from django.http import Http404
+# from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.db.models import F
 from django.shortcuts import render
-from dotenv import load_dotenv
-from neo4j import GraphDatabase
-from .models import Recipe
+from .models import Recipe, Menu
 
 
 # def index(request):
@@ -20,7 +16,11 @@ from .models import Recipe
 
 def index(request):
     recipes = Recipe.nodes.all()
-    context = { "recipe_list": recipes }
+    menus = Menu.nodes.all()
+    context = { 
+        "recipe_list": recipes,
+         "menu_list" : menus
+         }
     return render(request, "recipes/index.html", context)
 
 def recipe_details(request, recipe_id):
@@ -38,13 +38,26 @@ def recipe_details(request, recipe_id):
             'quantity' : relation.quantity,
             'unit' : relation.unit
         })
-    print(ingredient_list)
-    
+   
     context = {
         'recipe' : recipe,
         'ingredient_list' : ingredient_list
     }
+
     return render(request, "recipes/recipe_details.html", context)
+
+def menu_details(request, menu_id):
+    menu = Menu.nodes.get_or_none(uid=menu_id)
+
+    if menu is None:
+        raise Http404
+    
+    context = {
+        'menu' : menu,
+        'recipe_list' : menu.recipes.all()
+    }
+
+    return render(request, "recipes/menu_details.html", context)
 
 # class IndexView(generic.ListView):
 #     def get_queryset(self):
