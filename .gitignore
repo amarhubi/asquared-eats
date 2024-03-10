@@ -60,3 +60,4 @@ target/
 # Environment related
 env
 .env
+.vscode
