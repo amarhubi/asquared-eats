@@ -5,4 +5,9 @@
     {% endfor %}
     </ul>
 
+    <form action="{{ menu.get_create_shopping_list_url }}" method="post">
+    {% csrf_token %}
+         <input type="submit" value="Create Shopping List">
+    </form>
+    
     <a href="{% url 'recipes:index' %}">Home</a>

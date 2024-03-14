@@ -1,13 +1,14 @@
 from typing import Any
+from django.urls import reverse
 from neomodel import config, db
 from django.shortcuts import render
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 # from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.db.models import F
 from django.shortcuts import render
-from .models import Recipe, Menu
+from .models import Recipe, Menu, ShoppingList
 
 
 # def index(request):
@@ -58,6 +59,20 @@ def menu_details(request, menu_id):
     }
 
     return render(request, "recipes/menu_details.html", context)
+
+def create_shopping_list(request, menu_id):
+    return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={"menu_id" : menu_id }))
+
+
+def shopping_list_details(request, shopping_list_id):
+    shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
+
+    if shopping_list is None:
+        raise Http404
+    
+    context = {
+        shopping_list
+    }
 
 # class IndexView(generic.ListView):
 #     def get_queryset(self):

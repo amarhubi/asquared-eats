@@ -6,8 +6,9 @@ from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
                       UniqueIdProperty, RelationshipTo)
 from dotenv import load_dotenv
 from neomodel import db
-from models import Menu, Recipe, Ingredient, IngredientToRecipeRelation
+from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
 from datetime import datetime
+from helpers import utils
 
 
 # def add_friend(driver, name, friend_name):
@@ -57,8 +58,6 @@ if __name__ == '__main__':
     [i.delete() for i in Ingredient.nodes.all()]
     [r.delete() for r in Recipe.nodes.all()]
     # config.DRIVER = driver
-    # results, meta = db.cypher_query("RETURN 'Hello World' as message")
-    # print(results)
     
     salad_ingredients = [
         { 
@@ -116,33 +115,15 @@ if __name__ == '__main__':
 
     salad = Recipe(name='Tomato Pasta Salad').save()
     dal = Recipe(name='Dal').save()
-    for i in salad_ingredients:
-        print(i)
-        name = i.get('name')
-        relations = i.get('relations')
-        ingredient = Ingredient(name=name).save()
-        salad.ingredients.connect(ingredient,
-                                {
-                                    'quantity' :relations.get('quantity'),
-                                    'unit' : relations.get('unit'),
-                                    'description' : relations.get('description')
-                                    })
-    for i in dal_ingredients:
-        print(i)
-        name = i.get('name')
-        relations = i.get('relations')
-        ingredient = Ingredient(name=name).save()
-        dal.ingredients.connect(ingredient,
-                                {
-                                    'quantity' :relations.get('quantity'),
-                                    'unit' : relations.get('unit'),
-                                    'description' : relations.get('description')
-                                    })
-    dal.ingredients.connect(Ingredient.nodes.get(name='Tomato'), {
+    utils.create_ingredients_and_connect_to_recipe(dal, dal_ingredients)
+    utils.create_ingredients_and_connect_to_recipe(salad, salad_ingredients)
+    tomato = Ingredient.nodes.get(name='Tomato')
+    dal_tomato_relation = {
         'quantity' : 1,
         'unit' : 'whole',
         'description' : 'diced'
-    })
+    }
+    utils.connect_ingredient_to_recipe(dal, tomato, dal_tomato_relation)
 
     menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
     menu.recipes.connect(dal)
