@@ -1,4 +1,5 @@
 from typing import Any
+from wsgiref.util import shift_path_info
 from django.urls import reverse
 from neomodel import config, db
 from django.shortcuts import render
@@ -61,7 +62,11 @@ def menu_details(request, menu_id):
     return render(request, "recipes/menu_details.html", context)
 
 def create_shopping_list(request, menu_id):
-    return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={"menu_id" : menu_id }))
+    menu = Menu.nodes.get_or_none(uid=menu_id)
+    
+    if menu is not None:
+        shopping_list = ShoppingList(name=menu.name).save()
+    return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list.uid }))
 
 
 def shopping_list_details(request, shopping_list_id):
@@ -71,8 +76,9 @@ def shopping_list_details(request, shopping_list_id):
         raise Http404
     
     context = {
-        shopping_list
+        'shopping_list' : shopping_list
     }
+    return render(request, "recipes/shopping_list_details.html", context)
 
 # class IndexView(generic.ListView):
 #     def get_queryset(self):
