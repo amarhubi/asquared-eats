@@ -1,3 +1,9 @@
 <h1>{{ shopping_list.name }} shopping list</h1>
 
+<ul>
+    {% for item in shopping_list.items %}
+        <li>{{ item }}</li>
+    {% endfor %}
+</ul>
+
 <a href="{% url 'recipes:index' %}">Home</a>

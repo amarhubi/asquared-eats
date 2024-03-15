@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.db.models import F
 from django.shortcuts import render
 from .models import Recipe, Menu, ShoppingList
+from .helpers.utils import sum_ingredients
 
 
 # def index(request):
@@ -65,7 +66,9 @@ def create_shopping_list(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     
     if menu is not None:
-        shopping_list = ShoppingList(name=menu.name).save()
+        name = menu.name
+        items = sum_ingredients(menu)
+        shopping_list = ShoppingList(name=name, items=items).save()
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list.uid }))
 
 

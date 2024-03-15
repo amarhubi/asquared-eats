@@ -21,3 +21,12 @@
 {% else %}
     <p>No Menus are available.</p>
 {% endif %}
+
+<h2>Shopping Lists</h2>
+{% if shopping_lists %}
+    <ul>
+    {% for list in shopping_lists %}
+        <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}

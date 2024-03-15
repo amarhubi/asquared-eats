@@ -2,22 +2,23 @@ from django.db import models
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
-    UniqueIdProperty, RelationshipTo, StructuredRel, FloatProperty, DateTimeProperty)
+    UniqueIdProperty, RelationshipTo, StructuredRel, FloatProperty, DateTimeProperty, JSONProperty)
 from collections import defaultdict
-
-class Ingredient(StructuredNode):
-    uid = UniqueIdProperty()
-    name = StringProperty(required=True)
 
 class IngredientToObjectRelation(StructuredRel):
     quantity = FloatProperty(required=True)
     unit = StringProperty(required=True)
     description = StringProperty(required=False)
 
+class Ingredient(StructuredNode):
+    uid = UniqueIdProperty()
+    name = StringProperty(required=True)
+    recipe = RelationshipTo('Recipe', 'in_recipe', model=IngredientToObjectRelation)
+
 class Recipe(StructuredNode):
     uid = UniqueIdProperty()
     name = StringProperty(required=True)
-    ingredients = RelationshipTo(Ingredient, 'has_ingredient', model=IngredientToObjectRelation)
+    ingredients = RelationshipTo('Ingredient', 'has_ingredient', model=IngredientToObjectRelation)
 
     def get_absolute_url(self):
         # return reverse('recipes:index')
@@ -29,7 +30,10 @@ class RecipeToMenuRelation(StructuredRel):
 class ShoppingList(StructuredNode):
     uid = UniqueIdProperty()
     name = StringProperty()
-    items = RelationshipTo(Ingredient, 'has_item', model=IngredientToObjectRelation)
+    items = JSONProperty()
+
+    def get_absolute_url(self):
+        return reverse('recipes:shopping_list_details', kwargs={'shopping_list_id' : self.uid})
 
 class Menu(StructuredNode):
     uid = UniqueIdProperty()
