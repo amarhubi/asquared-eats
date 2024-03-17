@@ -9,7 +9,7 @@ from django.views import generic
 from django.utils import timezone
 from django.db.models import F
 from django.shortcuts import render
-from .models import Recipe, Menu, ShoppingList
+from .models import Recipe, Menu, ShoppingList, Ingredient
 from .helpers.utils import sum_ingredients
 
 
@@ -20,10 +20,12 @@ from .helpers.utils import sum_ingredients
 def index(request):
     recipes = Recipe.nodes.all()
     menus = Menu.nodes.all()
+    shopping_lists = ShoppingList.nodes.all()
     context = { 
         "recipe_list": recipes,
-         "menu_list" : menus
-         }
+        "menu_list" : menus,
+        "shopping_lists" : shopping_lists
+        }
     return render(request, "recipes/index.html", context)
 
 def recipe_details(request, recipe_id):
@@ -82,6 +84,26 @@ def shopping_list_details(request, shopping_list_id):
         'shopping_list' : shopping_list
     }
     return render(request, "recipes/shopping_list_details.html", context)
+
+def add_ingredient_to_recipe(request, recipe_id):
+    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
+    ingredients = Ingredient.nodes.all()
+
+    if recipe is None:
+        raise Http404
+
+    context = {
+        'recipe' : recipe,
+        'ingredients' : ingredients
+    }
+
+    return render(request, "recipes/add_ingredient_to_recipe.html", context)
+    # return HttpResponseRedirect(reverse('recipes:add_ingredient_to_recipe', kwargs={"recipe_id" : recipe.uid }))
+
+def add_ingredient(request, recipe_id):
+    print(request)
+    return HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe_id }))
+
 
 # class IndexView(generic.ListView):
 #     def get_queryset(self):

@@ -2,7 +2,7 @@
 
 <ul>
     {% for item in shopping_list.items %}
-        <li>{{ item }}</li>
+        <li>{{ item.quantity }} {{ item.description }} {{ item.name }}</li>
     {% endfor %}
 </ul>
 

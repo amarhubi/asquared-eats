@@ -1,0 +1,17 @@
+{% extends 'recipes/base.html' %}
+{% block content %}
+    <h1>Add ingredient to recipe</h1>
+
+    <label for="ingredients">Choose an ingredient:</label>
+
+    <select name="ingredients" id="ingredients" form="add_ingredient">
+        {% for i in ingredients %}
+            <option value="{{ i.name }}">{{ i.name }}</option>
+        {% endfor %}
+    </select> 
+
+    <form action="{{ recipe.get_add_ingredient_url }}" method="post" id="add_ingredient">
+        {% csrf_token %}
+        <input type="submit" value="Add Ingredient" />
+    </form>
+{% endblock content%}

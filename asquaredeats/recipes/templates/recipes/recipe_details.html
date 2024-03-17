@@ -1,8 +1,5 @@
-<h1>{{ recipe.name }}</h1>
-    <ul>
-    {% for ingredient in ingredient_list %}
-        <li>{{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</a></li>
-    {% endfor %}
-    </ul>
+{% include "recipes/recipe.html" %}
 
-    <a href="{% url 'recipes:index' %}">Home</a>
+<a href="{% url 'recipes:add_ingredient_to_recipe' recipe.uid %}">Add Ingredient</a>
+<br>
+<a href="{% url 'recipes:index' %}">Home</a>
