@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from neomodel import db
 from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
 from datetime import datetime
-from helpers import utils
+from helpers.utils import connect_ingredient_list_to_recipe, connect_ingredient_to_recipe, create_ingredient
 
 
 # def add_friend(driver, name, friend_name):
@@ -59,11 +59,51 @@ if __name__ == '__main__':
     [r.delete() for r in Recipe.nodes.all()]
     # config.DRIVER = driver
     
+    ingredients = [
+        {
+            'name' : 'Kalamata olives',
+            'units' : {
+                'g' : 1,
+            }
+        },
+        {
+            'name' : 'Tomato',
+            'units' : {
+                'g' : 1,
+                'whole' : 100
+            }
+        },
+        {
+            'name' : 'Capers',
+            'units' : {
+                'tablespoon' : 7.5
+            }
+        },
+        {
+            'name' : 'Yellow onion',
+            'units' : {
+                'whole' : 110    
+            }
+        },
+        {
+            'name' : 'Ginger',
+            'units' : {
+                'g' : 1
+            }
+        },
+        {
+            'name' : 'Cumin Seeds',
+            'units' : {
+                'teaspoon' : 2.1
+            }
+        }
+    ]
+
     salad_ingredients = [
         { 
             'name' : 'Kalamata olives',
             'relations' : {
-                'unit' : 'grams', 
+                'unit' : 'g', 
                 'quantity' : '200', 
                 'description' : 'seeded'
             } 
@@ -71,15 +111,15 @@ if __name__ == '__main__':
         { 
             'name' : 'Tomato',
             'relations' : {
-                'unit' : '', 
+                'unit' : 'whole', 
                 'quantity' : '1', 
-                'description' : 'whole'
+                'description' : ''
             } 
         },
         { 
             'name' : 'Capers',
             'relations' : {
-                'unit' : 'table spoon', 
+                'unit' : 'tablespoon', 
                 'quantity' : '1', 
                 'description' : ''
             } 
@@ -98,15 +138,15 @@ if __name__ == '__main__':
         { 
             'name' : 'Ginger',
             'relations' : {
-                'unit' : 'thumb sized piece', 
-                'quantity' : '1', 
+                'unit' : 'g', 
+                'quantity' : '50', 
                 'description' : 'grated'
             } 
         },
         { 
             'name' : 'Cumin Seeds',
             'relations' : {
-                'unit' : 'table spoon', 
+                'unit' : 'tablespoon', 
                 'quantity' : '1', 
                 'description' : ' toasted'
             } 
@@ -115,22 +155,23 @@ if __name__ == '__main__':
 
     salad = Recipe(name='Tomato Pasta Salad').save()
     dal = Recipe(name='Dal').save()
-    utils.create_ingredients_and_connect_to_recipe(dal, dal_ingredients)
-    utils.create_ingredients_and_connect_to_recipe(salad, salad_ingredients)
-    tomato = Ingredient.nodes.get(name='Tomato')
+    for i in ingredients:
+        create_ingredient(i)
+    connect_ingredient_list_to_recipe(dal, dal_ingredients)
+    connect_ingredient_list_to_recipe(salad, salad_ingredients)
+
     dal_tomato_relation = {
-        'quantity' : 1,
-        'unit' : 'whole',
-        'description' : 'diced'
+        'name' : 'Tomato',
+        'relations': {
+            'quantity' : 1,
+            'unit' : 'whole',
+            'description' : 'diced'
+        }
     }
-    utils.connect_ingredient_to_recipe(dal, tomato, dal_tomato_relation)
+    connect_ingredient_to_recipe(dal, dal_tomato_relation)
 
     menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
     menu.recipes.connect(dal)
     menu.recipes.connect(salad)
 
     db.close_connection()
-    
-    # jim = Person(name='Jim', age=3).save()  # Create
-    # jim.age = 4
-    # jim.save()  # Update, (with validation)

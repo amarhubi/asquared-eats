@@ -2,25 +2,34 @@ from collections import defaultdict
 from ..models import Menu, Recipe, Ingredient, IngredientToObjectRelation
 
 
-def create_ingredients_and_connect_to_recipe(recipe, ingredient_list):
-    for i in ingredient_list:
-        name = i.get('name')
-        relations = i.get('relations')
-        print(f"{name} {relations}")
-        ingredient = Ingredient(name=name).save()
-        connect_ingredient_to_recipe(recipe, ingredient, relations)
+def connect_ingredient_list_to_recipe(recipe, ingredient_list):
+    for ingredient in ingredient_list:
+        connect_ingredient_to_recipe(recipe, ingredient)
     return recipe 
 
-def connect_ingredient_to_recipe(recipe, ingredient, relation):
+def connect_ingredient_to_recipe(recipe, ingredient):
     # Format of relation dict
     # {
     #     'quantity' : 1,
     #     'unit' : 'whole',
     #     'description' : 'diced'
     # }
+
+    name = ingredient.get('name')
+    relation = ingredient.get('relations')
+    # print(f"{name} {relation}")
+    # print(ingredient)
+    ingredient = Ingredient.nodes.get(name=name)
     recipe.ingredients.connect(ingredient, relation)
     ingredient.recipe.connect(recipe, relation)
     return recipe
+
+def create_ingredient(i):
+    name = i.get('name')
+    units = i.get('units')
+    ingredient = Ingredient(name=name, units=units).save()
+    
+    return ingredient
 
 def sum_ingredients(menu):
     recipes = menu.recipes.all()

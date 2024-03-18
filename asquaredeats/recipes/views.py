@@ -71,6 +71,7 @@ def create_shopping_list(request, menu_id):
         name = menu.name
         items = sum_ingredients(menu)
         shopping_list = ShoppingList(name=name, items=items).save()
+        shopping_list.menu.connect(menu)
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list.uid }))
 
 
