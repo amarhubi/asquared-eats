@@ -1,5 +1,5 @@
 from collections import defaultdict
-from ..models import Menu, Recipe, Ingredient, IngredientToObjectRelation
+from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
 
 
 def connect_ingredient_list_to_recipe(recipe, ingredient_list):
