@@ -23,8 +23,6 @@ NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
 NEO4J_URI = os.getenv('NEO4J_URI')
 url = 'neo4j+s://{}:{}@{}'.format(NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_URI)
 
-print(f"This is the stuff {NEO4J_URI}")
-
 # Change the db conenction
 driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
 config.DRIVER = driver

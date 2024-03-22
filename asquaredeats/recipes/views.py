@@ -28,6 +28,7 @@ def index(request):
         }
     return render(request, "recipes/index.html", context)
 
+# Recipe views
 def recipe_details(request, recipe_id):
     recipe = Recipe.nodes.get_or_none(uid=recipe_id)
 
@@ -51,6 +52,30 @@ def recipe_details(request, recipe_id):
 
     return render(request, "recipes/recipe_details.html", context)
 
+
+def add_ingredient_to_recipe(request, recipe_id):
+    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
+    ingredients = Ingredient.nodes.all()
+
+    if recipe is None:
+        raise Http404
+
+    context = {
+        'recipe' : recipe,
+        'ingredients' : ingredients
+    }
+
+    return render(request, "recipes/add_ingredient_to_recipe.html", context)
+    # return HttpResponseRedirect(reverse('recipes:add_ingredient_to_recipe', kwargs={"recipe_id" : recipe.uid }))
+
+#Menu views
+def menu_list(request):
+    menus = Menu.nodes.all()
+    context = {
+        'menus' : menus
+    }
+    return render(request, "recipes/menu_list.html", context)
+
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
 
@@ -64,6 +89,7 @@ def menu_details(request, menu_id):
 
     return render(request, "recipes/menu_details.html", context)
 
+# Shopping list views
 def create_shopping_list(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     
@@ -86,20 +112,6 @@ def shopping_list_details(request, shopping_list_id):
     }
     return render(request, "recipes/shopping_list_details.html", context)
 
-def add_ingredient_to_recipe(request, recipe_id):
-    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
-    ingredients = Ingredient.nodes.all()
-
-    if recipe is None:
-        raise Http404
-
-    context = {
-        'recipe' : recipe,
-        'ingredients' : ingredients
-    }
-
-    return render(request, "recipes/add_ingredient_to_recipe.html", context)
-    # return HttpResponseRedirect(reverse('recipes:add_ingredient_to_recipe', kwargs={"recipe_id" : recipe.uid }))
 
 def add_ingredient(request, recipe_id):
     print(request)

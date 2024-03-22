@@ -49,48 +49,6 @@ if __name__ == '__main__':
             ingredient['name'] = name
             ingredient['units'] = units
             ingredients.append(ingredient)
-                
-
-
-    # ingredients = [
-    #     {
-    #         'name' : 'Kalamata olives',
-    #         'units' : {
-    #             'g' : 1,
-    #         }
-    #     },
-    #     {
-    #         'name' : 'Tomato',
-    #         'units' : {
-    #             'g' : 1,
-    #             'whole' : 100
-    #         }
-    #     },
-    #     {
-    #         'name' : 'Capers',
-    #         'units' : {
-    #             'tablespoon' : 7.5
-    #         }
-    #     },
-    #     {
-    #         'name' : 'Yellow onion',
-    #         'units' : {
-    #             'whole' : 110    
-    #         }
-    #     },
-    #     {
-    #         'name' : 'Ginger',
-    #         'units' : {
-    #             'g' : 1
-    #         }
-    #     },
-    #     {
-    #         'name' : 'Cumin Seeds',
-    #         'units' : {
-    #             'teaspoon' : 2.1
-    #         }
-    #     }
-    # ]
 
     salad_ingredients = [
         { 

@@ -1,0 +1,8 @@
+{% extends "recipes/base.html" %}
+
+{% block content %}
+<h1>Menus</h1>
+{% for menu in menus %}
+    <li><a href="{{ menu.get_absoluteurl }}">{{ menu.name }}</a></li>
+{% endfor %}
+{% endblock %}
