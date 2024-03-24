@@ -103,17 +103,25 @@ def create_shopping_list(request, menu_id):
 
 def shopping_list_details(request, shopping_list_id):
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
+    all_ingredients = Ingredient.nodes.all()
+    ingredients = []
+    for i in all_ingredients:
+        ingredients.append((i.name, i.units.keys()))
 
     if shopping_list is None:
         raise Http404
     
     context = {
-        'shopping_list' : shopping_list
+        'shopping_list' : shopping_list,
+        'ingredients' : ingredients
     }
     return render(request, "recipes/shopping_list_details.html", context)
 
+def add_item_to_shopping_list(request, shopping_list_id):
+    print(request.POST)
+    return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list_id}))
 
-def add_ingredient(request, recipe_id):
+def add_ingredient_to_recipe(request, recipe_id):
     print(request)
     return HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe_id }))
 

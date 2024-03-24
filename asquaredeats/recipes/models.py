@@ -38,6 +38,9 @@ class ShoppingList(StructuredNode):
 
     def get_absolute_url(self):
         return reverse('recipes:shopping_list_details', kwargs={'shopping_list_id' : self.uid})
+    
+    def get_add_item_url(self):
+        return reverse('recipes:add_item_to_shopping_list', kwargs={'shopping_list_id' : self.uid})
 
 class Menu(StructuredNode):
     uid = UniqueIdProperty()

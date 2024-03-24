@@ -1,3 +1,5 @@
+{% extends "recipes/base.html"%}
+{% block content %}
 <h1>{{ shopping_list.name }} shopping list</h1>
 
 <ul>
@@ -6,4 +8,22 @@
     {% endfor %}
 </ul>
 
+    <h1>Add item to shopping list</h1>
+
+    <label for="amount">Amount</label>
+    <input type="text" id="amount" name="amount" form="add_item"/>
+
+    <select name="ingredients" id="ingredients" form="add_item">
+        {% for ingredient in ingredients %}
+        <option value="{{ ingredient.0 }}">{{ ingredient.0 }}</option>
+    {% endfor %}
+    </select> 
+    
+
+<form action="{{ shopping_list.get_add_item_url }}" method="post" id="add_item">
+    {% csrf_token %}
+         <input type="submit" value="Add item">
+    </form>
+
 <a href="{% url 'recipes:index' %}">Home</a>
+{% endblock %}
