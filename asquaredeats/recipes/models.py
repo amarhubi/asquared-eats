@@ -16,6 +16,9 @@ class Ingredient(StructuredNode):
     recipe = RelationshipTo('Recipe', 'in_recipe', model=IngredientToObjectRelation)
     units = JSONProperty()
 
+    def convert_to_grams(self, unit, amount):      
+        return float(self.units.get(unit)) * amount
+
 class Recipe(StructuredNode):
     uid = UniqueIdProperty()
     name = StringProperty(required=True)
@@ -54,33 +57,3 @@ class Menu(StructuredNode):
     
     def get_create_shopping_list_url(self):
         return reverse('recipes:create_shopping_list', kwargs={"menu_id" : self.uid})
-        # shopping_list = ShoppingList(name=self.name).save()
-        # recipes = self.recipes.all()
-        # items = []
-        # print(recipes)
-        # quantities = defaultdict(int)
-        # units = {}
-        # # shopping_list = ShoppingList().save()
-        # for r in recipes:
-        #     ingredients = r.ingredients.all()
-                       
-        #     for i in ingredients:
-        #         # print(i)
-        #         name = i.name
-        #         relation = r.ingredients.relationship(i)
-        #         quantity = relation.quantity
-        #         unit = relation.unit
-        #         # print(f'{quantity} {unit} {name}')
-        #         quantities[name] += quantity
-        #         units[name] = unit
-        # print(quantities)
-        # print(units)
-        # for name, quantity in quantities.items():
-        #     shopping_list.items.connect({
-        #         'name' : name,
-        #         'relation' : {
-        #             'unit' : units[name],
-        #             'quantitiy' : quantity,
-        #             'description' : ''
-        #         }
-        #     })

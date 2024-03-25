@@ -44,7 +44,7 @@ if __name__ == '__main__':
             
             while row:
                 unit = row.pop(0)
-                conversion = row.pop(0)
+                conversion = float(row.pop(0))
                 units[unit] = conversion
             ingredient['name'] = name
             ingredient['units'] = units

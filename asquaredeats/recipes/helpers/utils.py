@@ -32,25 +32,29 @@ def sum_ingredients(menu):
     recipes = menu.recipes.all()
     menu_ingredients = []
     for r in recipes:
-        [menu_ingredients.append((i, r)) for i in r.ingredients]
+        for i in r.ingredients:
+            menu_ingredients.append((i, r))
     summed_ingredients = []
     quantities = defaultdict(int)
     units = {}
 
     for i, r in menu_ingredients:
-        name = i.name
+        # print(f"{r} {i}")
+        ingredient_name = i.name
         relation = i.recipe.relationship(r)
         quantity = relation.quantity
         unit = relation.unit
+        amount_in_grams = i.convert_to_grams(unit, quantity)
+        # print(f"{ingredient_name} {quantity} {unit} {amount_in_grams}")
+        quantities[ingredient_name] += amount_in_grams
+        
 
-        quantities[name] += quantity
-        units[name] = unit
-
-    for name, quantity in quantities.items():
+    for ingredient_name, quantity in quantities.items():
         summed_ingredients.append({
-            'name' : name,
+            'name' : ingredient_name,
             'quantity' : quantity,
-            'unit' : units[name]
+            'unit' : 'g'
         })
         
     return summed_ingredients
+
