@@ -13,17 +13,11 @@ from helpers.utils import connect_ingredient_list_to_recipe, connect_ingredient_
 
 if __name__ == '__main__':
     load_dotenv()
-
-    user = os.environ['NEO4J_USERNAME']
-    psw = os.environ['NEO4J_PASSWORD']
-    uri = os.environ['NEO4J_URI']
- 
-    load_dotenv()
     NEO4J_USERNAME = os.getenv('NEO4J_USERNAME')
     NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
     NEO4J_URI = os.getenv('NEO4J_URI')
-    url = 'neo4j+s://{}:{}@{}'.format(NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_URI)
-
+    # url = 'neo4j+s://{}:{}@{}'.format(NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_URI)
+  
     # # Change the db conenction
     driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     db.set_connection(driver=driver)

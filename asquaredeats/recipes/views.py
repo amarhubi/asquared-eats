@@ -91,12 +91,9 @@ def create_shopping_list(request, menu_id):
     if menu is not None:
         name = menu.name
         items = sum_ingredients(menu)
-        print(items)
         shopping_list = ShoppingList(name=name, items=items).save()
         shopping_list.menu.connect(menu)
-    # return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={"menu_id" : menu_id}))
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list.uid }))
-
 
 def shopping_list_details(request, shopping_list_id):
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
@@ -117,23 +114,16 @@ def shopping_list_details(request, shopping_list_id):
 def add_item_to_shopping_list(request, shopping_list_id):
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
     if shopping_list is None:
-        raise Http404
+        raise Http404('Shopping list does not exist')
     new_item_name = request.POST.get('ingredients')
     new_item_amount = float(request.POST.get('amount'))
     ingredient_node = Ingredient.nodes.get_or_none(name=new_item_name)
 
     if ingredient_node is None:
-        raise Http404
+        raise Http404('Ingredient does not exist')
 
-
-    item_index = next((i for i, item in enumerate(shopping_list.items) if item['name'] == new_item_name), None)
-    if item_index is not None:
-        item = shopping_list.items[item_index]
-        item_quantity = item.get('quantity')
-        item['quantity'] = item_quantity + new_item_amount
-        shopping_list.items[item_index] = item
-        shopping_list.save()
-        print(shopping_list.items)
+    shopping_list.add_item(new_item_name, new_item_amount).save()
+    
     #     next(ingredient for ingredients)
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list_id}))
 

@@ -44,6 +44,24 @@ class ShoppingList(StructuredNode):
     
     def get_add_item_url(self):
         return reverse('recipes:add_item_to_shopping_list', kwargs={'shopping_list_id' : self.uid})
+    
+    def add_item(self, new_item_name, new_item_amount):
+        item_index = next((i for i, item in enumerate(self.items) if item.get('name') == new_item_name), None)
+        if item_index is None:
+            item = {
+                'name' : new_item_name,
+                'quantity' : new_item_amount,
+                'unit' : 'g'
+            }
+            self.items.append(item)
+            print(f"Item wasn't on the list and added {item}")
+            return self
+        item = self.items[item_index]
+        item_quantity = item.get('quantity')
+        item['quantity'] = item_quantity + new_item_amount
+        self.items[item_index] = item
+        
+        return self
 
 class Menu(StructuredNode):
     uid = UniqueIdProperty()

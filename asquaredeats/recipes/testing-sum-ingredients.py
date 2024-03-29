@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from neomodel import db
 from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
 from datetime import datetime
-from helpers import utils
+from asquaredeats.recipes import utils
 
 
 if __name__ == '__main__':
