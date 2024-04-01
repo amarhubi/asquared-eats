@@ -92,6 +92,13 @@ class MenuView(View):
             'menus' : menus
         }
         return render(request, "recipes/menu_list.html", context)
+    
+    def post(self, request):
+        print(request.POST)
+        menu_name = request.POST.get('menu-name')
+        menu = Menu(name=menu_name).save()
+        return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={'menu_id' : menu.uid}))
+    #
 
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
@@ -106,11 +113,6 @@ def menu_details(request, menu_id):
 
     return render(request, "recipes/menu_details.html", context)
 
-def create_menu(request):
-    menu_name = request.POST.get('menu-name')
-    menu = Menu(name=menu_name)
-    return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={'menu_id'}))
-# Shopping list views
 def create_shopping_list(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     
