@@ -27,9 +27,9 @@ class Recipe(StructuredNode):
     def get_absolute_url(self):
         return reverse('recipes:recipe_details', kwargs={"recipe_id" : self.uid })
     
-    def get_add_ingredient_url(self):
-        return(reverse('recipes:add_ingredient', kwargs={'recipe_id' : self.uid}))
-
+    def get_add_to_menu_url(self):
+        return(reverse('recipes:add_to_menu', kwargs={'recipe_id' : self.uid}))
+    
 class RecipeToMenuRelation(StructuredRel):
     uid = UniqueIdProperty()
 

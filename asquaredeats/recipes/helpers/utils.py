@@ -72,7 +72,7 @@ def create_dummy_data ():
     # # Change the db conenction
     driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     db.set_connection(driver=driver)
-    [m.delete() for m in Menu.nodes.all()]
+    [m.delete() for m in MenuView.nodes.all()]
     [i.delete() for i in Ingredient.nodes.all()]
     [r.delete() for r in Recipe.nodes.all()]
 
@@ -166,7 +166,7 @@ def create_dummy_data ():
     }
     connect_ingredient_to_recipe(dal, dal_tomato_relation)
 
-    menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
+    menu = MenuView(name='Feet don\'t fail me now', date_created=datetime.now()).save()
     menu.recipes.connect(dal)
     menu.recipes.connect(salad)
 

@@ -1,14 +1,12 @@
 from typing import Any
 from wsgiref.util import shift_path_info
 from django.urls import reverse
+from django.views import View
 from neomodel import config, db
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
-# from django.urls import reverse
-from django.views import generic
-from django.utils import timezone
-from django.db.models import F
 from django.shortcuts import render
+from django.contrib import messages
 from .models import Recipe, Menu, ShoppingList, Ingredient
 from .helpers.utils import sum_ingredients
 
@@ -30,8 +28,8 @@ def recipe_details(request, recipe_id):
     if recipe is None:
         raise Http404
     
+    menu_list = Menu.nodes.all()
     ingredient_list = []
-
     for ingredient in recipe.ingredients.all():
         relation = recipe.ingredients.relationship(ingredient)
         ingredient_list.append({
@@ -42,11 +40,27 @@ def recipe_details(request, recipe_id):
    
     context = {
         'recipe' : recipe,
-        'ingredient_list' : ingredient_list
+        'ingredient_list' : ingredient_list,
+        'menu_list' : menu_list
     }
 
     return render(request, "recipes/recipe_details.html", context)
 
+def add_to_menu(request, recipe_id):
+    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
+    menu_id = request.POST.get('menus')[0]
+    menu = Menu.nodes.get_or_none(menu_id)
+    if recipe is None:
+        messages.error("Recipe does not exist")
+        return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
+    
+    if menu is None:
+        messages.error("Menu does not exist")
+        return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
+    print(request.POST)
+    menu.recipes.connect(recipe)
+    messages.info(f"{recipe.name} added to menu")
+    return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
 
 def add_ingredient_to_recipe(request, recipe_id):
     recipe = Recipe.nodes.get_or_none(uid=recipe_id)
@@ -71,6 +85,14 @@ def menu_list(request):
     }
     return render(request, "recipes/menu_list.html", context)
 
+class MenuView(View):
+    def get(self, request):
+        menus = Menu.nodes.all()
+        context = {
+            'menus' : menus
+        }
+        return render(request, "recipes/menu_list.html", context)
+
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
 
@@ -84,6 +106,10 @@ def menu_details(request, menu_id):
 
     return render(request, "recipes/menu_details.html", context)
 
+def create_menu(request):
+    menu_name = request.POST.get('menu-name')
+    menu = Menu(name=menu_name)
+    return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={'menu_id'}))
 # Shopping list views
 def create_shopping_list(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
@@ -95,7 +121,7 @@ def create_shopping_list(request, menu_id):
         shopping_list.menu.connect(menu)
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list.uid }))
 
-def shopping_list_details(request, shopping_list_id):
+def shopping_list_details(request, shopping_list_id):  
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
     all_ingredients = Ingredient.nodes.all()
     ingredients = []
@@ -107,24 +133,33 @@ def shopping_list_details(request, shopping_list_id):
     
     context = {
         'shopping_list' : shopping_list,
-        'ingredients' : ingredients
+        'ingredients' : ingredients,
     }
     return render(request, "recipes/shopping_list_details.html", context)
 
 def add_item_to_shopping_list(request, shopping_list_id):
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
+    
     if shopping_list is None:
         raise Http404('Shopping list does not exist')
+    
+    print(request.POST)
     new_item_name = request.POST.get('ingredients')
-    new_item_amount = float(request.POST.get('amount'))
-    ingredient_node = Ingredient.nodes.get_or_none(name=new_item_name)
-
+    try:
+        new_item_amount = float(request.POST.get('amount'))
+        ingredient_node = Ingredient.nodes.get_or_none(name=new_item_name)
+    except ValueError:
+        messages.error(request, 'Amount must be a float')
+        return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list_id})) 
     if ingredient_node is None:
-        raise Http404('Ingredient does not exist')
+        messages.error(request, 'Item does not exist')
+
+        return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list_id}))
 
     shopping_list.add_item(new_item_name, new_item_amount).save()
     
     #     next(ingredient for ingredients)
+    messages.info(request, "Item added to shopping list ")
     return HttpResponseRedirect(reverse('recipes:shopping_list_details', kwargs={"shopping_list_id" : shopping_list_id}))
 
 def add_ingredient_to_recipe(request, recipe_id):

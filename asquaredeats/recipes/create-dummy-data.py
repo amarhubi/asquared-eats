@@ -7,7 +7,7 @@ from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
                       UniqueIdProperty, RelationshipTo)
 from dotenv import load_dotenv
 from neomodel import db
-from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
+from models import MenuView, Recipe, Ingredient, IngredientToObjectRelation
 from datetime import datetime
 from helpers.utils import connect_ingredient_list_to_recipe, connect_ingredient_to_recipe, create_ingredient
 
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # # Change the db conenction
     driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     db.set_connection(driver=driver)
-    [m.delete() for m in Menu.nodes.all()]
+    [m.delete() for m in MenuView.nodes.all()]
     [i.delete() for i in Ingredient.nodes.all()]
     [r.delete() for r in Recipe.nodes.all()]
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     }
     connect_ingredient_to_recipe(dal, dal_tomato_relation)
 
-    menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
+    menu = MenuView(name='Feet don\'t fail me now', date_created=datetime.now()).save()
     menu.recipes.connect(dal)
     menu.recipes.connect(salad)
 

@@ -1,5 +1,23 @@
 {% include "recipes/recipe.html" %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-<a href="{% url 'recipes:add_ingredient_to_recipe' recipe.uid %}">Add Ingredient</a>
-<br>
+    <select name="menus" id="menus" form="add_recipe_to_menu" >
+        {% for menu in menu_list %}
+            <option value="{{ menu.uid }}">{{ menu.name }}</option>
+        {% endfor %}
+        <!-- <option selected="selected" value="fake ingredient">fake ingredient</option> -->
+    </select> 
+    
+
+<form action="{{ recipe.get_add_to_menu_url }}" method="post" id="add_recipe_to_menu">
+    {% csrf_token %}
+         <input type="submit" value="Add to menu">
+    </form>
+
 <a href="{% url 'recipes:index' %}">Home</a>

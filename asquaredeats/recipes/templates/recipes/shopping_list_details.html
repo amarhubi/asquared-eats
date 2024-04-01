@@ -9,14 +9,21 @@
 </ul>
 
     <h1>Add item to shopping list</h1>
-
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
     <label for="amount">Amount</label>
-    <input type="text" id="amount" name="amount" form="add_item"/>
+    <input  type="number" id="amount" name="amount" form="add_item" required placeholder="Enter an amount in grams"/>
 
-    <select name="ingredients" id="ingredients" form="add_item">
+    <select name="ingredients" id="ingredients" form="add_item" >
         {% for ingredient in ingredients %}
-        <option value="{{ ingredient.0 }}">{{ ingredient.0 }}</option>
-    {% endfor %}
+            <option value="{{ ingredient.0 }}">{{ ingredient.0 }}</option>
+        {% endfor %}
+        <option selected="selected" value="fake ingredient">fake ingredient</option>
     </select> 
     
 

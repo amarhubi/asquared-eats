@@ -7,7 +7,6 @@ from neo4j import GraphDatabase
 
 from django.test.runner import DiscoverRunner
 
-
 class Neo4jTestRunner(DiscoverRunner):
     def setup_databases(self, *args, **kwargs):
         # Stop your development instance

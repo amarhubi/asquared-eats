@@ -6,7 +6,7 @@ from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
                       UniqueIdProperty, RelationshipTo)
 from dotenv import load_dotenv
 from neomodel import db
-from models import Menu, Recipe, Ingredient, IngredientToObjectRelation
+from models import MenuView, Recipe, Ingredient, IngredientToObjectRelation
 from datetime import datetime
 from asquaredeats.recipes import utils
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     driver = GraphDatabase().driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
     db.set_connection(driver=driver)
 
-    menu = Menu.nodes.get_or_none(name='Feet don\'t fail me now')
+    menu = MenuView.nodes.get_or_none(name='Feet don\'t fail me now')
 
     if menu is not None:
         # recipes = menu.recipes.all()
