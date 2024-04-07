@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import View
 from neomodel import config, db
 from django.shortcuts import render
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import render
 from django.contrib import messages
 from .models import Recipe, Menu, ShoppingList, Ingredient
@@ -92,13 +92,22 @@ class MenuView(View):
             'menus' : menus
         }
         return render(request, "recipes/menu_list.html", context)
-    
+   
     def post(self, request):
         print(request.POST)
         menu_name = request.POST.get('menu-name')
         menu = Menu(name=menu_name).save()
         return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={'menu_id' : menu.uid}))
     #
+def delete_menu(request, menu_id):
+    menu = Menu.nodes.get_or_none(uid=menu_id)
+
+    if menu is None:
+        raise Http404('Menu does not exit')
+    
+    if menu.delete():
+        return HttpResponseRedirect(reverse('recipes:menu_list'))
+    return HttpResponseServerError
 
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)

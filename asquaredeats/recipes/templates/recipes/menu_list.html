@@ -2,8 +2,20 @@
 
 {% block content %}
 <h1>Menus</h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% for menu in menus %}
-    <li><a href="{{ menu.get_absoluteurl }}">{{ menu.name }}</a></li>
+    <li>
+        <a href="{{ menu.get_absoluteurl }}">{{ menu.name }}</a>
+        <a href="{% url 'recipes:delete_menu' menu.uid %}">Delete menu</a>
+    </li>
+
 {% endfor %}
    <form action="{% url 'recipes:menu_list' %}" method="post" id="create-menu">
         {% csrf_token %}

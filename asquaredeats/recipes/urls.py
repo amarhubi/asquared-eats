@@ -9,6 +9,7 @@ urlpatterns = [
     path("recipes/<str:recipe_id>/", views.recipe_details, name="recipe_details"),
     path("menus/", MenuView.as_view(), name="menu_list"),
     path("menus/<str:menu_id>/", views.menu_details, name="menu_details"),
+    path("menus/<str:menu_id>/delete", views.delete_menu, name="delete_menu"),
     path("menus/<str:menu_id>/create-shopping-list", views.create_shopping_list, name="create_shopping_list"),
     path("shopping_lists/<str:shopping_list_id>", views.shopping_list_details, name="shopping_list_details"),
     path("shopping_lists/<str:shopping_list_id>/add-item", views.add_item_to_shopping_list, name="add_item_to_shopping_list"),
