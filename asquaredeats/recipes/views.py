@@ -75,8 +75,14 @@ def add_ingredient_to_recipe(request, recipe_id):
     }
 
     return render(request, "recipes/add_ingredient_to_recipe.html", context)
-    # return HttpResponseRedirect(reverse('recipes:add_ingredient_to_recipe', kwargs={"recipe_id" : recipe.uid }))
 
+def recipes_list(request):
+    recipes = Recipe.nodes.all()
+
+    context = {
+        'recipes' : recipes,
+    }
+    return render(request, "recipes/recipe_list.html")
 #Menu views
 def menu_list(request):
     menus = Menu.nodes.all()
@@ -106,7 +112,7 @@ def delete_menu(request, menu_id):
         raise Http404('Menu does not exit')
     
     if menu.delete():
-        return HttpResponseRedirect(reverse('recipes:menu_list'))
+        return HttpResponseRedirect(reverse('recipes:menus'))
     return HttpResponseServerError
 
 def menu_details(request, menu_id):
@@ -121,7 +127,13 @@ def menu_details(request, menu_id):
     }
 
     return render(request, "recipes/menu_details.html", context)
-
+def shopping_lists(request):
+    shopping_lists = ShoppingList.nodes.all()
+    context = {
+        'shopping_lists' : shopping_lists
+    }
+    return render(request, 'recipes/shopping_lists.html', context )
+    
 def create_shopping_list(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     

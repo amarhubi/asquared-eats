@@ -1,7 +1,7 @@
 {% extends 'recipes/base.html' %}
 
 {%  block content %}
-    <h2>Recipes</h2>
+    <h2><a href="{% url 'recipes:recipes_list' %}">Recipes</a></h2>
     {% if recipe_list %}
         <ul>
             {% for recipe in recipe_list %}
@@ -12,7 +12,7 @@
         <p>No Recipes are available.</p>
     {% endif %}
 
-    <h2><a href="{% url 'recipes:menu_list' %}">Menus</a></h2>
+    <h2><a href="{% url 'recipes:menus' %}">Menus</a></h2>
         {% if menu_list %}
             <ul>
             {% for menu in menu_list %}
@@ -23,12 +23,15 @@
             <p>No Menus are available.</p>
         {% endif %}
 
-    <h2>Shopping Lists</h2>
+    <h2><a href="{% url 'recipes:shopping_lists' %}">Shopping Lists</a></h2>
         {% if shopping_lists %}
             <ul>
             {% for list in shopping_lists %}
                 <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
             {% endfor %}
             </ul>
-    {% endif %}
+
+        {% else %}
+            <p>No Shopping Lists are available.</p>
+        {% endif %}
 {% endblock %}

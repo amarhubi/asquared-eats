@@ -17,7 +17,7 @@
     </li>
 
 {% endfor %}
-   <form action="{% url 'recipes:menu_list' %}" method="post" id="create-menu">
+   <form action="{% url 'recipes:menus' %}" method="post" id="create-menu">
         {% csrf_token %}
         <label for="menu-name">Enter a menu name</label>
         <input type="text" name="menu-name" id="menu-name" placeholder="Menu name"/>

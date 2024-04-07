@@ -1,0 +1,23 @@
+{% extends "recipes/base.html"%}
+{% block content %}
+
+    <h1><a href="{% url 'recipes:shopping_lists' %}">Shopping Lists</a></h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+        {% if shopping_lists %}
+            <ul>
+            {% for list in shopping_lists %}
+                <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
+            {% endfor %}
+            </ul>
+
+        {% else %}
+            <p>No Shopping Lists are available.</p>
+        {% endif %}
+{% endblock %}
