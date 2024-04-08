@@ -48,18 +48,19 @@ def recipe_details(request, recipe_id):
 
 def add_to_menu(request, recipe_id):
     recipe = Recipe.nodes.get_or_none(uid=recipe_id)
-    menu_id = request.POST.get('menus')[0]
-    menu = Menu.nodes.get_or_none(menu_id)
+    menu_id = request.POST.get('menus')
+
+    menu = Menu.nodes.get_or_none(uid=menu_id)
     if recipe is None:
-        messages.error("Recipe does not exist")
+        messages.error(request, "Recipe does not exist")
         return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
     
     if menu is None:
-        messages.error("Menu does not exist")
+        messages.error(request, "Menu does not exist")
         return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
     print(request.POST)
     menu.recipes.connect(recipe)
-    messages.info(f"{recipe.name} added to menu")
+    messages.info(request, f"{recipe.name} added to menu")
     return  HttpResponseRedirect(reverse('recipes:recipe_details', kwargs={"recipe_id" : recipe.uid }))
 
 def add_ingredient_to_recipe(request, recipe_id):
