@@ -2,9 +2,22 @@
     <ul>
     {% for recipe in recipe_list %}
         <li><a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a></li>
+        <form action="{{ menu.get_remove_recipe_url }}" method="post" id="menu-remove-recipe">
+            {% csrf_token %}
+            <input type="hidden" name="recipe_id" value="{{ recipe.uid }}" >
+            <button type="submit">Remove from menu</button>
+        </form>
     {% endfor %}
     </ul>
-
+    <form action="{{ menu.get_add_recipe_url }}" method="post"> 
+        {% csrf_token %}
+        <select name="new_recipe">
+            {% for recipe in recipes %}
+                <option value="{{recipe.uid}}">{{recipe.name}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Add recipe to menu" />
+    </form>
     <form action="{{ menu.get_create_shopping_list_url }}" method="post">
     {% csrf_token %}
          <input type="submit" value="Create Shopping List">

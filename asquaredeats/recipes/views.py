@@ -3,7 +3,7 @@ from wsgiref.util import shift_path_info
 from django.urls import reverse
 from django.views import View
 from neomodel import config, db
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import Http404, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import render
 from django.contrib import messages
@@ -83,7 +83,7 @@ def recipes_list(request):
     context = {
         'recipes' : recipes,
     }
-    return render(request, "recipes/recipe_list.html")
+    return render(request, "recipes/recipe_list.html", context)
 #Menu views
 def menu_list(request):
     menus = Menu.nodes.all()
@@ -106,7 +106,7 @@ class MenuView(View):
         menu = Menu(name=menu_name).save()
         return HttpResponseRedirect(reverse('recipes:menu_details', kwargs={'menu_id' : menu.uid}))
     #
-def delete_menu(request, menu_id):
+def menu_delete(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
 
     if menu is None:
@@ -118,16 +118,38 @@ def delete_menu(request, menu_id):
 
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
-
+    menu_recipes = menu.recipes.all()
+    recipes = Recipe.nodes.all()
     if menu is None:
         raise Http404
     
     context = {
         'menu' : menu,
-        'recipe_list' : menu.recipes.all()
+        'recipes' : recipes,
+        'recipe_list' : menu_recipes
     }
 
     return render(request, "recipes/menu_details.html", context)
+
+def menu_add_recipe(request, menu_id):
+    menu = Menu.nodes.get_or_none(uid=menu_id)
+    recipe_id = request.POST.get('new_recipe')
+    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
+    if recipe is None:
+        raise HttpResponseServerError("Cannot add recipe because recipe does not exist")
+    menu.add_recipe(recipe).save()
+    print(f"Request: {request.POST}")
+    return redirect(reverse('recipes:menu_details', kwargs={"menu_id": menu.uid}))
+
+def menu_remove_recipe(request, menu_id):
+    menu = Menu.nodes.get_or_none(uid=menu_id)
+    recipe_id = request.POST.get('recipe_id')
+    print(recipe_id)
+    recipe = Recipe.nodes.get_or_none(uid=recipe_id)
+    menu.remove_recipe(recipe).save()
+    return redirect(reverse('recipes:menu_details', kwargs={"menu_id": menu.uid}))
+
+# Shopping list views
 def shopping_lists(request):
     shopping_lists = ShoppingList.nodes.all()
     context = {

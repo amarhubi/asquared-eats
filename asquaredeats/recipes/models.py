@@ -30,6 +30,7 @@ class Recipe(StructuredNode):
     def get_add_to_menu_url(self):
         return(reverse('recipes:add_to_menu', kwargs={'recipe_id' : self.uid}))
     
+# TODO add a relation count to track if a recipe is already in a menu
 class RecipeToMenuRelation(StructuredRel):
     uid = UniqueIdProperty()
 
@@ -68,10 +69,27 @@ class Menu(StructuredNode):
     name = StringProperty(required=True)
     date_created = DateTimeProperty()
     recipes = RelationshipTo(Recipe, 'has_recipe', model=RecipeToMenuRelation)
-    
+
+    # TODO Check if the menu and recipe are already connected. If yes, increment the relation count
+    def add_recipe(self, recipe):
+        self.recipes.connect(recipe)
+        return self
+    def remove_recipe(self, recipe):
+        print(recipe)
+        self.recipes.disconnect(recipe)
+        return self
     def get_absolute_url(self):
         # return reverse('recipes:index')
         return reverse('recipes:menu_details', kwargs={"menu_id" : self.uid })
     
     def get_create_shopping_list_url(self):
         return reverse('recipes:create_shopping_list', kwargs={"menu_id" : self.uid})
+    
+    def get_delete_url(self):
+        return reverse('recipes:menu_delete', kwargs={"menu_id" : self.uid})
+    
+    def get_add_recipe_url(self):
+        return reverse('recipes:menu_add_recipe', kwargs={"menu_id": self.uid})
+
+    def get_remove_recipe_url(self):
+        return reverse('recipes:menu_remove_recipe', kwargs={"menu_id" : self.uid})

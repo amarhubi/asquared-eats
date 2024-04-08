@@ -1,4 +1,5 @@
 from collections import defaultdict
+import datetime
 import os
 
 from django import db
@@ -166,7 +167,7 @@ def create_dummy_data ():
     }
     connect_ingredient_to_recipe(dal, dal_tomato_relation)
 
-    menu = MenuView(name='Feet don\'t fail me now', date_created=datetime.now()).save()
+    menu = Menu(name='Feet don\'t fail me now', date_created=datetime.now()).save()
     menu.recipes.connect(dal)
     menu.recipes.connect(salad)
 

@@ -3,6 +3,13 @@
 {% block content %}
 <h1>Menus</h1>
 
+   <form action="{% url 'recipes:menus' %}" method="post" id="create-menu">
+        {% csrf_token %}
+        <label for="menu-name">Enter a menu name</label>
+        <input type="text" name="menu-name" id="menu-name" placeholder="Menu name"/>
+        <input type="submit" value="Create menu" />
+    </form>
+    <br>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -12,17 +19,14 @@
 {% endif %}
 {% for menu in menus %}
     <li>
-        <a href="{{ menu.get_absoluteurl }}">{{ menu.name }}</a>
-        <a href="{% url 'recipes:delete_menu' menu.uid %}">Delete menu</a>
+        <a href="{{ menu.get_absolute_url }}">{{ menu.name }}</a>
+        <form action="{{ menu.get_delete_url}}" method="post" name="delete-menu">
+            {% csrf_token %}
+            <button type="submit">Delete menu</button>
+        </form>
     </li>
 
 {% endfor %}
-   <form action="{% url 'recipes:menus' %}" method="post" id="create-menu">
-        {% csrf_token %}
-        <label for="menu-name">Enter a menu name</label>
-        <input type="text" name="menu-name" id="menu-name" placeholder="Menu name"/>
-        <input type="submit" value="Create menu" />
-    </form>
 
 
 {% endblock %}
