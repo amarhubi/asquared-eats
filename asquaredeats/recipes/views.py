@@ -119,15 +119,24 @@ def menu_delete(request, menu_id):
 # TODO return count with the recipe list to show when a recipe is on the list multiple times
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
-    menu_recipes = menu.recipes.all()
-    recipes = Recipe.nodes.all()
     if menu is None:
         raise Http404
+
+    menu_recipes = [] 
+    for r in menu.recipes.all():
+        menu_recipe = {
+            'recipe' : r,
+            'count' : menu.recipes.relationship(r).count
+        }
+        menu_recipes.append(menu_recipe)
+    recipes = Recipe.nodes.all()
+
     
+
     context = {
         'menu' : menu,
         'recipes' : recipes,
-        'recipe_list' : menu_recipes
+        'menu_recipes' : menu_recipes
     }
 
     return render(request, "recipes/menu_details.html", context)

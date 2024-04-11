@@ -1,12 +1,15 @@
 <h1>{{ menu.name }}</h1>
     <ul>
-    {% for recipe in recipe_list %}
-        <li><a href="{{ recipe.get_absolute_url }}">
-            {{ recipe.name }} 
+    {% for r in menu_recipes %}
+        <li><a href="{{ r.recipe.get_absolute_url }}">
+            {{ r.recipe.name }} 
+            {% if r.count > 1 %}
+            (x {{r.count}})
+            {% endif %}
             </a></li>
         <form action="{{ menu.get_remove_recipe_url }}" method="post" id="menu-remove-recipe">
             {% csrf_token %}
-            <input type="hidden" name="recipe_id" value="{{ recipe.uid }}" >
+            <input type="hidden" name="recipe_id" value="{{ r.recipe.uid }}" >
             <button type="submit">Remove from menu</button>
         </form>
     {% endfor %}
