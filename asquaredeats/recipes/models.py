@@ -1,5 +1,6 @@
+from http.server import HTTPServer
 from django.db import models
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.urls import reverse
 from neomodel import (config, StructuredNode, StringProperty, IntegerProperty,
     UniqueIdProperty, RelationshipTo, StructuredRel, FloatProperty, DateTimeProperty, JSONProperty, RelationshipFrom)
@@ -30,9 +31,9 @@ class Recipe(StructuredNode):
     def get_add_to_menu_url(self):
         return(reverse('recipes:add_to_menu', kwargs={'recipe_id' : self.uid}))
     
-# TODO add a relation count to track if a recipe is already in a menu
 class RecipeToMenuRelation(StructuredRel):
     uid = UniqueIdProperty()
+    count = IntegerProperty(default=1)
 
 class ShoppingList(StructuredNode):
     uid = UniqueIdProperty()
@@ -72,12 +73,28 @@ class Menu(StructuredNode):
 
     # TODO Check if the menu and recipe are already connected. If yes, increment the relation count
     def add_recipe(self, recipe):
+        if self.recipes.is_connected(recipe):
+            menu_to_recipe_relationship = self.recipes.relationship(recipe)
+            menu_to_recipe_relationship.count += 1 
+            menu_to_recipe_relationship.save()
+            return self
         self.recipes.connect(recipe)
         return self
+
     def remove_recipe(self, recipe):
-        print(recipe)
+        if not self.recipes.is_connected(recipe):
+            return HttpResponseServerError("Recipe is not part of the menu")
+
+        menu_to_recipe_relationship = self.recipes.relationship(recipe)
+
+        if menu_to_recipe_relationship.count > 1:
+            menu_to_recipe_relationship.count -= 1 
+            menu_to_recipe_relationship.save()
+            return self
+
         self.recipes.disconnect(recipe)
         return self
+
     def get_absolute_url(self):
         # return reverse('recipes:index')
         return reverse('recipes:menu_details', kwargs={"menu_id" : self.uid })

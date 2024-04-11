@@ -1,7 +1,9 @@
 <h1>{{ menu.name }}</h1>
     <ul>
     {% for recipe in recipe_list %}
-        <li><a href="{{ recipe.get_absolute_url }}">{{ recipe.name }}</a></li>
+        <li><a href="{{ recipe.get_absolute_url }}">
+            {{ recipe.name }} 
+            </a></li>
         <form action="{{ menu.get_remove_recipe_url }}" method="post" id="menu-remove-recipe">
             {% csrf_token %}
             <input type="hidden" name="recipe_id" value="{{ recipe.uid }}" >

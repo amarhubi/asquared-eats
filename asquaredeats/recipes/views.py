@@ -116,6 +116,7 @@ def menu_delete(request, menu_id):
         return HttpResponseRedirect(reverse('recipes:menus'))
     return HttpResponseServerError
 
+# TODO return count with the recipe list to show when a recipe is on the list multiple times
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     menu_recipes = menu.recipes.all()
