@@ -5,7 +5,7 @@
 
    <form action="{% url 'recipes:menus' %}" method="post" id="create-menu">
         {% csrf_token %}
-        <label for="menu-name">Enter a menu name</label>
+        <label for="menu-name">Create a new menu</label>
         <input type="text" name="menu-name" id="menu-name" placeholder="Menu name"/>
         <input type="submit" value="Create menu" />
     </form>

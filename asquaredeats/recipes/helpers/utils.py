@@ -46,9 +46,10 @@ def sum_ingredients(menu):
 
     for i, r in menu_ingredients:
         # print(f"{r} {i}")
+        menu_count = menu.recipes.relationship(r).count
         ingredient_name = i.name
         relation = i.recipe.relationship(r)
-        quantity = relation.quantity
+        quantity = relation.quantity * menu_count
         unit = relation.unit
         amount_in_grams = i.convert_to_grams(unit, quantity)
         # print(f"{ingredient_name} {quantity} {unit} {amount_in_grams}")

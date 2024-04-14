@@ -71,7 +71,6 @@ class Menu(StructuredNode):
     date_created = DateTimeProperty()
     recipes = RelationshipTo(Recipe, 'has_recipe', model=RecipeToMenuRelation)
 
-    # TODO Check if the menu and recipe are already connected. If yes, increment the relation count
     def add_recipe(self, recipe):
         if self.recipes.is_connected(recipe):
             menu_to_recipe_relationship = self.recipes.relationship(recipe)

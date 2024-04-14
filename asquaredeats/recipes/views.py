@@ -116,7 +116,6 @@ def menu_delete(request, menu_id):
         return HttpResponseRedirect(reverse('recipes:menus'))
     return HttpResponseServerError
 
-# TODO return count with the recipe list to show when a recipe is on the list multiple times
 def menu_details(request, menu_id):
     menu = Menu.nodes.get_or_none(uid=menu_id)
     if menu is None:
@@ -130,8 +129,6 @@ def menu_details(request, menu_id):
         }
         menu_recipes.append(menu_recipe)
     recipes = Recipe.nodes.all()
-
-    
 
     context = {
         'menu' : menu,
@@ -179,6 +176,8 @@ def create_shopping_list(request, menu_id):
 
 def shopping_list_details(request, shopping_list_id):  
     shopping_list = ShoppingList.nodes.get_or_none(uid=shopping_list_id)
+    menu = shopping_list.menu.all()
+    print(menu)
     all_ingredients = Ingredient.nodes.all()
     ingredients = []
     for i in all_ingredients:
@@ -190,6 +189,7 @@ def shopping_list_details(request, shopping_list_id):
     context = {
         'shopping_list' : shopping_list,
         'ingredients' : ingredients,
+        'menu' : menu
     }
     return render(request, "recipes/shopping_list_details.html", context)
 
